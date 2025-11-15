@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-nav-layout="vertical" data-vertical-style="overlay" data-theme-mode="light" data-header-styles="light" data-menu-styles="light" data-toggled="close">
-<head>
+<head> 
 
     <!-- Meta Data -->
     <meta charset="UTF-8">
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title> VYZOR - Bootstrap 5 Premium Admin & Dashboard Template </title>
+    <title>Lecog - Create Account</title>
     <meta name="Description" content="Bootstrap Responsive Admin Web Dashboard HTML5 Template">
     <meta name="Author" content="Spruko Technologies Private Limited">
     <meta name="keywords" content="dashboard template,dashboard html,bootstrap admin,dashboard admin,admin template,sales dashboard,crypto dashboard,projects dashboard,html template,html,html css,admin dashboard template,html css bootstrap,dashboard html css,pos system,bootstrap dashboard">
     <!-- Favicon -->
-    <link rel="icon" href="https://sprukomarket.com/products/html/bootstrap/vyzor/dist/assets/images/brand-logos/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="assets/newimages/favicon.ico" type="image/x-icon">
 
     <!-- Main Theme Js -->
     <script src="assets/js/authentication-main.js"></script>
@@ -93,8 +93,8 @@
         <div class="col-xxl-3 col-xl-3 col-lg-12 d-xl-block d-none px-0">
             <div class="authentication-cover overflow-hidden">
                 <div class="authentication-cover-logo">
-                    <a href="index.html">
-                        <img src="assets/images/brand-logos/toggle-logo.png" alt="logo" class="desktop-dark"> 
+                    <a href="index.php">
+                        <img src="assets/newimages/logolecog.png" alt="logo" class="desktop-dark"> 
                     </a>
                 </div>
                 <div class="authentication-cover-background">

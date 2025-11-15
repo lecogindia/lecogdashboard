@@ -133,7 +133,8 @@
                     if(res.Status == "Error"){
                         $("#formMsg").html(res.Message)
                     }else{
-                        window.location = ''
+                        document.cookie = "username="+encodeURIComponent(email) +"; path=/";
+                        window.location = 'otp-verify.php'
                     }
 
               },

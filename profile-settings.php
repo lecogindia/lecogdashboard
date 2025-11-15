@@ -1,4 +1,13 @@
-<?= include 'header.php'; ?>
+<?php
+// include 'header.php'; 
+include 'connect.php';
+$email = $_COOKIE['username'];
+$sql = "SELECT * FROM users s LEFT JOIN epr_role_identification epr ON s.id = epr.uer_id LEFT JOIN regulatory_details reg ON s.id = reg.uer_id WHERE s.email = '$email'";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+print_r($result); exit();
+?>
 <style type="text/css">
     .nav-tabs .nav-link.active {
       color: #ffffff !important;
@@ -291,6 +300,10 @@ background-color: #237535;
       allowHTML: true,
       removeItemButton: true,
   });
+
+$(document).ready(function(){
+    let email = getCookie("username");
+})
 </script>
 </body>
 
