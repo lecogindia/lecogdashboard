@@ -4,8 +4,8 @@ include 'connect.php';
 $email = $_COOKIE['username'];
 ?>
 <style type="text/css">
- .nav-tabs .nav-link.active {
-  color: #ffffff !important;
+   .nav-tabs .nav-link.active {
+      color: #ffffff !important;
 /*  border-color: transparent transparent #8b5cf6 transparent;*/
 border-width: 0 0 2px 0;
 border-style: solid;
@@ -229,7 +229,7 @@ background-color: #237535;
                             <div class="col-xl-6">
                                 <label for="company_name_company" class="form-label">CPCB / SPCB Registration Number
                                 :</label>
-                                <input type="text" class="form-control" id="full_name"
+                                <input type="text" class="form-control" id="registration_name"
                                 placeholder="Enter Official registration ID">
                             </div>
                             <div class="col-xl-6">
@@ -237,11 +237,11 @@ background-color: #237535;
                                 <div class="row">
                                   <div class="col-md-6">
                                     <label for="valid_from" class="form-label">Validity Period (From):</label>
-                                    <input type="text" class="form-control flatpickr-input active" id="date" placeholder="Choose date" readonly="readonly">
+                                    <input type="text" class="form-control flatpickr-input active" id="from_date" placeholder="Choose date" readonly="readonly">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="valid_to" class="form-label">To:</label>
-                                    <input type="text" class="form-control flatpickr-input active" id="date" placeholder="Choose date" readonly="readonly">
+                                    <input type="text" class="form-control flatpickr-input active" id="to_date" placeholder="Choose date" readonly="readonly">
                                 </div>
                             </div>
                         </div>
@@ -286,12 +286,12 @@ background-color: #237535;
         });
     });
 
-    new Choices('#material_type', {
+    var materialChoice = new Choices('#material_type', {
       allowHTML: true,
       removeItemButton: true,
   });
 
-    new Choices('#plastic_category', {
+    var plasticChoice =  new Choices('#plastic_category', {
       allowHTML: true,
       removeItemButton: true,
   });
@@ -337,9 +337,44 @@ background-color: #237535;
 
                     // epr details
                     $("#role").val(res.role);
-                    $("#material_type").val(res.material_type).trigger("change");
-                    $("#plastic_category").val(res.plastic_category).trigger("change");
-                    $("#designation").val(res.annual_qnt);
+                    // $("#material_type").val(res.material_type).trigger("change");
+                    // $("#plastic_category").val(res.plastic_category).trigger("change");
+                    // let materialArray = res.material_type ? res.material_type.split(",") : [];
+                    // materialChoice.clearStore();
+                    // materialChoice.setValue(
+                    //     materialArray.map(v => ({ value: v, label: v, selected: true }))
+                    //     );
+
+                    const originalMaterialOptions = [...document.querySelector('#material_type').options]
+                    .map(o => o.value);
+                    let savedMaterial = res.material_type ? res.material_type.split(",") : [];
+                    materialChoice.clearStore();
+                    materialChoice.setChoices(
+                        originalMaterialOptions.map(opt => ({
+                            value: opt,
+                            label: opt,
+                            selected: savedMaterial.includes(opt)
+                        })),
+                        'value',
+                        'label',
+                        true
+                        );
+
+                    const originalPlasticOptions = [...document.querySelector('#plastic_category').options]
+                    .map(o => o.value);
+                    let savedPlastic = res.plastic_category ? res.plastic_category.split(",") : [];
+                    plasticChoice.clearStore();
+                    plasticChoice.setChoices(
+                        originalPlasticOptions.map(opt => ({
+                            value: opt,
+                            label: opt,
+                            selected: savedPlastic.includes(opt)
+                        })),
+                        'value',
+                        'label',
+                        true
+                        );
+                    $("#annual_qnt").val(res.annual_qnt);
                     $("#target_year").val(res.target_year);
                 }
 
@@ -386,17 +421,17 @@ background-color: #237535;
                       timer: 1500
                   });
                 } else {
-                   Swal.fire({
-                      position: "top-end",
-                      icon: "error",
-                      title: "something went wrong",
-                      showConfirmButton: false,
-                      timer: 1500
-                  });
-               }
-           },
+                 Swal.fire({
+                  position: "top-end",
+                  icon: "error",
+                  title: "something went wrong",
+                  showConfirmButton: false,
+                  timer: 1500
+              });
+             }
+         },
 
-           error: function (xhr, status, error) {
+         error: function (xhr, status, error) {
             console.error(error);
             alert("Something went wrong!");
         }
@@ -428,17 +463,17 @@ background-color: #237535;
                       timer: 1500
                   });
                 } else {
-                   Swal.fire({
-                      position: "top-end",
-                      icon: "error",
-                      title: "something went wrong",
-                      showConfirmButton: false,
-                      timer: 1500
-                  });
-               }
-           },
+                 Swal.fire({
+                  position: "top-end",
+                  icon: "error",
+                  title: "something went wrong",
+                  showConfirmButton: false,
+                  timer: 1500
+              });
+             }
+         },
 
-           error: function (xhr, status, error) {
+         error: function (xhr, status, error) {
             console.error(error);
             alert("Something went wrong!");
         }
@@ -470,17 +505,17 @@ background-color: #237535;
                       timer: 1500
                   });
                 } else {
-                   Swal.fire({
-                      position: "top-end",
-                      icon: "error",
-                      title: "something went wrong",
-                      showConfirmButton: false,
-                      timer: 1500
-                  });
-               }
-           },
+                 Swal.fire({
+                  position: "top-end",
+                  icon: "error",
+                  title: "something went wrong",
+                  showConfirmButton: false,
+                  timer: 1500
+              });
+             }
+         },
 
-           error: function (xhr, status, error) {
+         error: function (xhr, status, error) {
             console.error(error);
             alert("Something went wrong!");
         }
