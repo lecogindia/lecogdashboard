@@ -1,16 +1,11 @@
 <?php
-// include 'header.php'; 
+include 'header.php';
 include 'connect.php';
 $email = $_COOKIE['username'];
-$sql = "SELECT * FROM users s LEFT JOIN epr_role_identification epr ON s.id = epr.uer_id LEFT JOIN regulatory_details reg ON s.id = reg.uer_id WHERE s.email = '$email'";
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-print_r($result); exit();
 ?>
 <style type="text/css">
-    .nav-tabs .nav-link.active {
-      color: #ffffff !important;
+ .nav-tabs .nav-link.active {
+  color: #ffffff !important;
 /*  border-color: transparent transparent #8b5cf6 transparent;*/
 border-width: 0 0 2px 0;
 border-style: solid;
@@ -104,7 +99,7 @@ background-color: #237535;
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-primary float-end">Save Changes</button>
+                        <button onclick="saveUserDetails()" class="btn btn-primary float-end">Save Changes</button>
                     </div>
                 </div>
             </div>
@@ -139,7 +134,7 @@ background-color: #237535;
                             <div class="col-xl-4">
                                 <label for="company_name_company" class="form-label">Email ID
                                 :</label>
-                                <input type="text" class="form-control" id="email"
+                                <input type="text" readonly class="form-control" id="email"
                                 placeholder="Enter Primary Email ID">
                             </div>
                             <div class="col-xl-4">
@@ -151,7 +146,7 @@ background-color: #237535;
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-primary float-end">Save Changes</button>
+                        <button onclick="saveContact()" class="btn btn-primary float-end">Save Changes</button>
                     </div>
                 </div>
             </div>
@@ -190,7 +185,7 @@ background-color: #237535;
                             <div class="col-xl-12">
                                 <label for="company_name_company" class="form-label">Plastic Category (if Plastic selected)
                                 :</label>
-                                <select class="form-control" name="plastic_categroy" id="plastic_categroy" multiple>
+                                <select class="form-control" name="plastic_category" id="plastic_category" multiple>
                                     <option value="Plastic">Plastic</option>
                                     <option value="Battery">Battery</option>
                                     <option value="E-Waste">E-Waste</option>
@@ -203,7 +198,7 @@ background-color: #237535;
                             <div class="col-xl-6">
                                 <label for="company_name_company" class="form-label">Annual Quantity Introduced (MT)
                                 :</label>
-                                <input type="number" class="form-control" id="designation"
+                                <input type="number" class="form-control" id="annual_qnt"
                                 placeholder="Enter Annual Quantity Introduced (MT)">
                             </div>
                             <div class="col-xl-4">
@@ -218,7 +213,7 @@ background-color: #237535;
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-primary float-end">Save Changes</button>
+                        <button class="btn btn-primary float-end" onclick="eprRole()">Save Changes</button>
                     </div>
                 </div>
             </div>
@@ -242,11 +237,11 @@ background-color: #237535;
                                 <div class="row">
                                   <div class="col-md-6">
                                     <label for="valid_from" class="form-label">Validity Period (From):</label>
-                                     <input type="text" class="form-control flatpickr-input active" id="date" placeholder="Choose date" readonly="readonly">
+                                    <input type="text" class="form-control flatpickr-input active" id="date" placeholder="Choose date" readonly="readonly">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="valid_to" class="form-label">To:</label>
-                                     <input type="text" class="form-control flatpickr-input active" id="date" placeholder="Choose date" readonly="readonly">
+                                    <input type="text" class="form-control flatpickr-input active" id="date" placeholder="Choose date" readonly="readonly">
                                 </div>
                             </div>
                         </div>
@@ -296,14 +291,201 @@ background-color: #237535;
       removeItemButton: true,
   });
 
-    new Choices('#plastic_categroy', {
+    new Choices('#plastic_category', {
       allowHTML: true,
       removeItemButton: true,
   });
 
-$(document).ready(function(){
-    let email = getCookie("username");
-})
+
+    $(document).ready(function(){
+        let email = getCookie("username");
+
+        getProfile(email)
+
+    })
+
+    function getProfile(email){
+        var formData = new FormData()
+
+        formData.append('email',decodeURIComponent(email))
+
+        $.ajax({
+            url: "get_profile.php",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                var resp = JSON.parse(response)
+                if(resp.Status === "Success"){
+                    res = resp.data
+                    $('#company_name_company').val(res.org_name)
+                    $('#cin_company').val(res.cin)
+                    $('#gst_company').val(res.gst)
+                    $('#pan_company').val(res.pan)
+                    $('#state_company').val(res.state)
+                    $('#address_company').val(res.address)
+                    $('#city_company').val(res.city)
+                    $('#pin_company').val(res.pincode)
+                    $('#org_type_company').val(res.org_type)
+                    // contact information staretd
+                    $('#full_name').val(res.full_name)
+                    $('#designation').val(res.designation)
+                    $('#number').val(res.mobile)
+                    $('#email').val(res.email)
+                    $('#optional_email').val(res.alternative_email)
+
+                    // epr details
+                    $("#role").val(res.role);
+                    $("#material_type").val(res.material_type).trigger("change");
+                    $("#plastic_category").val(res.plastic_category).trigger("change");
+                    $("#designation").val(res.annual_qnt);
+                    $("#target_year").val(res.target_year);
+                }
+
+            },
+            error: function() {
+              alert("Something went wrong")
+          }
+      });
+    }
+
+    
+</script>
+
+
+<script type="text/javascript">
+    function saveUserDetails(){
+        let formData = {
+            email:decodeURIComponent(getCookie('username')),
+            company_name: $("#company_name_company").val(),
+            cin: $("#cin_company").val(),
+            gst: $("#gst_company").val(),
+            pan: $("#pan_company").val(),
+            address: $("#address_company").val(),
+            state: $("#state_company").val(),
+            city: $("#city_company").val(),
+            pin: $("#pin_company").val(),
+            organization_type: $("#org_type_company").val(),
+            type:'company'
+        };
+
+        $.ajax({
+            url: "submit_profile.php",  // your backend file
+            type: "POST",
+            data: formData,
+            dataType: "json",
+
+            success: function (response) {
+                if (response.status === "Success") {
+                    Swal.fire({
+                      position: "top-end",
+                      icon: "success",
+                      title: "Company details saved successfully!",
+                      showConfirmButton: false,
+                      timer: 1500
+                  });
+                } else {
+                   Swal.fire({
+                      position: "top-end",
+                      icon: "error",
+                      title: "something went wrong",
+                      showConfirmButton: false,
+                      timer: 1500
+                  });
+               }
+           },
+
+           error: function (xhr, status, error) {
+            console.error(error);
+            alert("Something went wrong!");
+        }
+    });
+    };
+
+    function saveContact(){
+        let formData = {
+            email:decodeURIComponent(getCookie('username')),
+            full_name: $("#full_name").val(),
+            designation: $("#designation").val(),
+            number: $("#number").val(),
+            email: $("#email").val(),
+            optional_email: $("#optional_email").val(),
+            type:'contact'
+        };
+        $.ajax({
+            url: "submit_profile.php",  // your backend file
+            type: "POST",
+            data: formData,
+            dataType: "json",
+            success: function (response) {
+                if (response.status === "Success") {
+                    Swal.fire({
+                      position: "top-end",
+                      icon: "success",
+                      title: "Contant details saved successfully!",
+                      showConfirmButton: false,
+                      timer: 1500
+                  });
+                } else {
+                   Swal.fire({
+                      position: "top-end",
+                      icon: "error",
+                      title: "something went wrong",
+                      showConfirmButton: false,
+                      timer: 1500
+                  });
+               }
+           },
+
+           error: function (xhr, status, error) {
+            console.error(error);
+            alert("Something went wrong!");
+        }
+    })
+    }
+
+    function eprRole(){
+        let formData = {
+            email:decodeURIComponent(getCookie('username')),
+            role: $("#role").val(),
+            material_type: $("#material_type").val(),
+            plastic_category: $("#plastic_category").val(),
+            annual_qnt: $("#annual_qnt").val(),
+            target_year: $("#target_year").val(),
+            type:'epr'
+        };
+        $.ajax({
+            url: "submit_profile.php",  // your backend file
+            type: "POST",
+            data: formData,
+            dataType: "json",
+            success: function (response) {
+                if (response.status === "Success") {
+                    Swal.fire({
+                      position: "top-end",
+                      icon: "success",
+                      title: "Contant details saved successfully!",
+                      showConfirmButton: false,
+                      timer: 1500
+                  });
+                } else {
+                   Swal.fire({
+                      position: "top-end",
+                      icon: "error",
+                      title: "something went wrong",
+                      showConfirmButton: false,
+                      timer: 1500
+                  });
+               }
+           },
+
+           error: function (xhr, status, error) {
+            console.error(error);
+            alert("Something went wrong!");
+        }
+    })
+    }
 </script>
 </body>
 

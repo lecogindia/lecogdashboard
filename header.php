@@ -46,6 +46,8 @@
     <!-- Auto Complete CSS -->
     <link rel="stylesheet" href="assets/libs/%40tarekraafat/autocomplete.js/css/autoComplete.css">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+
     <style type="text/css">
      .pdf-btn {
       border: none;
